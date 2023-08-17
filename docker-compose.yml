@@ -1,0 +1,29 @@
+version: '3.1'
+
+services:
+  mysql:
+   image: mysql
+   restart: always
+   container_name: db-mysql
+   ports:
+    - 3306:3306
+   environment:
+     MYSQL_DATABASE: member_application
+     MYSQL_ROOT_PASSWORD: root
+     MYSQL_USER: admin
+     MYSQL_PASSWORD: admin
+   volumes:
+    - ./dump:/docker-entrypoint-initdb.d
+    
+  app:
+   build: .
+   container_name: application
+   network_mode : host
+   restart: always
+   depends_on:
+    - mysql
+   command: bash -c "
+    cd app/target &&
+    sleep 10 &&
+    java -jar member-0.0.1-SNAPSHOT.jar"
+    
